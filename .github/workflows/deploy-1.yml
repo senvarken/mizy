@@ -4,7 +4,9 @@ on:
   push:
     branches: [main]
     paths:
+      - 'index.js'
       - 'kumanda-worker/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 jobs:
@@ -12,11 +14,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Wrangler deploy (Durable Object migration dahil)
+
+      - name: Hazirla (index.js bul + wrangler.toml olustur)
+        run: |
+          set -e
+          SRC=""
+          for f in kumanda-worker/src/index.js kumanda-worker/index.js index.js; do
+            if [ -f "$f" ]; then SRC="$f"; break; fi
+          done
+          if [ -z "$SRC" ]; then
+            echo "HATA: index.js bulunamadi. Depo icerigi:"
+            ls -R | head -50
+            exit 1
+          fi
+          echo "Kullanilan dosya: $SRC"
+          if ! grep -q "class Room" "$SRC"; then
+            echo "HATA: $SRC icinde 'class Room' yok, yanlis index.js olabilir."
+            exit 1
+          fi
+          mkdir -p build/src
+          cp "$SRC" build/src/index.js
+          cat > build/wrangler.toml <<'EOT'
+          name = "tvkumanda"
+          main = "src/index.js"
+          compatibility_date = "2024-09-01"
+
+          [[durable_objects.bindings]]
+          name = "ROOM"
+          class_name = "Room"
+
+          [[migrations]]
+          tag = "v1"
+          new_sqlite_classes = ["Room"]
+          EOT
+          echo "--- build/wrangler.toml ---"
+          cat build/wrangler.toml
+
+      - name: Wrangler deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: kumanda-worker
+          workingDirectory: build
           wranglerVersion: "4"
           command: deploy

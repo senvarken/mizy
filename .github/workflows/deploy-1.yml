@@ -19,4 +19,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: kumanda-worker
           wranglerVersion: "4"
-          command: deploy src/index.js
+          command: deploy

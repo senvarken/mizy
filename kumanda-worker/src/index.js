@@ -140,7 +140,7 @@ async function route(req, env) {
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
     if (url.pathname === '/api/health') return jres({ ok: true, v: 2 });
-    if (!env.ROOM) return jres({ ok: false, error: 'ROOM_BINDING_MISSING', detail: 'Durable Object ROOM bağlı değil: wrangler.toml ile yeniden deploy et' }, 500);
+    if (!env.ROOM) return jres({ ok: false, error: 'ROOM_BINDING_MISSING', detail: 'ROOM yok. Görülen bindingler: [' + Object.keys(env).join(', ') + ']' }, 500);
 
     if (url.pathname === '/api/new' && req.method === 'POST') {
       for (let t = 0; t < 5; t++) {

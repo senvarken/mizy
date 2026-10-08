@@ -12,7 +12,7 @@ const ALPH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const TV_TTL_MS = 120000;        // TV bu süre komut çekmezse "çevrim dışı"
 const ROOM_KEEP_MS = 30 * 60000; // TV tamamen kapanırsa oda 30 dk sonra silinir
 const PHONE_ACTIONS = new Set(['ch+', 'ch-', 'play', 'mute', 'vol+', 'vol-', 'seek', 'list',
-  'play-idx', 'pl-idx', 'play-no', 'play-fav', 'cat-idx', 'cat+', 'cat-', 'vq', 'pl-add']);
+  'play-idx', 'pl-idx', 'play-no', 'play-fav', 'cat-idx', 'cat+', 'cat-', 'vq', 'pl-add', 'key']);
 
 function jres(obj, status = 200) {
   return new Response(JSON.stringify(obj), { status, headers: { ...JSON_HDR, ...CORS } });
@@ -112,6 +112,7 @@ export class Room {
         if (c.v !== undefined) cmd.v = Number(c.v) || 0;
         if (c.n !== undefined) cmd.n = String(c.n).slice(0, 100);
         if (c.t !== undefined) cmd.t = String(c.t).slice(0, 20);
+        if (c.d !== undefined) cmd.d = String(c.d).slice(0, 10); // D-pad yönü: up|down|left|right|ok|back
         if (c.q !== undefined) cmd.q = String(c.q).slice(0, 80);
         if (c.g !== undefined) cmd.g = String(c.g).slice(0, 80);
         if (c.url !== undefined) cmd.url = String(c.url).slice(0, 500);

@@ -12,7 +12,7 @@ const ALPH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const TV_TTL_MS = 120000;        // TV bu süre komut çekmezse "çevrim dışı"
 const ROOM_KEEP_MS = 30 * 60000; // TV tamamen kapanırsa oda 30 dk sonra silinir
 const PHONE_ACTIONS = new Set(['ch+', 'ch-', 'play', 'mute', 'vol+', 'vol-', 'seek', 'list',
-  'play-idx', 'pl-idx', 'play-no', 'play-fav', 'cat-idx', 'cat+', 'cat-', 'vq', 'pl-add', 'key']);
+  'play-idx', 'pl-idx', 'play-no', 'play-fav', 'cat-idx', 'cat+', 'cat-', 'vq', 'pl-add', 'pl-del', 'key']);
 
 function jres(obj, status = 200) {
   return new Response(JSON.stringify(obj), { status, headers: { ...JSON_HDR, ...CORS } });
